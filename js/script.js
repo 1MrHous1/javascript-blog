@@ -100,7 +100,7 @@ generateTitleLinks();
 //          generateTags
 
 
-function generateTags() {
+function generateAuthors() {
 
   /* find all articles */
   const articles = document.querySelectorAll(optArticleSelector);
@@ -133,7 +133,7 @@ function generateTags() {
   }
 }
 
-generateTags();
+generateAuthors();
 
 
 //                tagClickHandler
@@ -270,6 +270,27 @@ function addClickListenersToAuthors() {
 }
 addClickListenersToAuthors();
 
+//      calculateTagsParams
+
+function calculateTagsParams(tags) {
+
+  const params = {
+    min: 999999,
+    max: 0
+  };
+
+  for (let tag in tags) {
+    console.log(tag + ' is used ' + tags[tag] + ' times');
+    if(tags[tag] > params.max){
+      params.max = tags[tag];
+    } else if (tags[tag] < params.min){
+      params.min = tags[tag];
+    }
+    return params;
+  }
+}
+
+
 //        generateTags
 
 function generateTags() {
@@ -312,7 +333,19 @@ function generateTags() {
   /* [NEW] find list of tags in right column */
   const tagList = document.querySelector('.tags');
 
-  /* [NEW] add html from allTags to tagList */
-  tagList.innerHTML = allTags.join('');
+  /* [NEW] create variable for all links HTML code */
+  const tagsParam = calculateTagsParams(allTags);
+  let allTagsHTML = '';
+
+  /* [NEW] START LOOP: for each tag in allTags: */
+  for (let tag in allTags) {
+    /* [NEW] generate code of a link and add it to allTagsHTML */
+    allTagsHTML += tag + ' (' + allTags[tag] + ') ';
+  }
+  /* [NEW] END LOOP: for each tag in allTags: */
+
+  /*[NEW] add HTML from allTagsHTML to tagList */
+  tagList.innerHTML = allTagsHTML;
 }
+
 generateTags();
