@@ -97,7 +97,7 @@ function generateTitleLinks(customSelector = '') {
 generateTitleLinks();
 
 
-//          generateTags
+//          generateAuthors
 
 
 function generateAuthors() {
@@ -281,15 +281,21 @@ function calculateTagsParams(tags) {
 
   for (let tag in tags) {
     console.log(tag + ' is used ' + tags[tag] + ' times');
-    if(tags[tag] > params.max){
+    if (tags[tag] > params.max) {
       params.max = tags[tag];
-    } else if (tags[tag] < params.min){
+    } else if (tags[tag] < params.min) {
       params.min = tags[tag];
     }
     return params;
   }
 }
 
+// calculateTagClass
+
+function calculateTagClass(count, params) {
+  const tagLinkHTML = '<li>' + calculateTagClass(allTags[tag], tagsParam) + '</li>';
+  console.log('tagLinkHTML:', tagLinkHTML);
+}
 
 //        generateTags
 
@@ -340,7 +346,8 @@ function generateTags() {
   /* [NEW] START LOOP: for each tag in allTags: */
   for (let tag in allTags) {
     /* [NEW] generate code of a link and add it to allTagsHTML */
-    allTagsHTML += tag + ' (' + allTags[tag] + ') ';
+    allTagsHTML += tagLinkHTML;
+
   }
   /* [NEW] END LOOP: for each tag in allTags: */
 
