@@ -15,7 +15,19 @@ const opt = {
   cloudClassPrefix : 'tag-size-',
 };
 
-
+const templates = {
+  articleLink: Handlebars.compile(document.querySelector('#template-article-link').innerHTML)
+};
+const templatesAuthor = {
+  authorLink: Handlebars.compile(document.querySelector('#template-author-link').innerHTML)
+};
+const templatesTag = {
+  tagLink: Handlebars.compile(document.querySelector('#template-tag-link').innerHTML)
+};
+// 4 & 5
+const templatesTagCloud = {
+  tagCloudLink: Handlebars.compile(document.querySelector('#template-tag-cloud-link').innerHTML)
+};
 // document.getElementById('test-button').addEventListener('click', function(){
 //     const links = document.querySelectorAll('.titles a');
 //     console.log('links:', links);
@@ -83,7 +95,8 @@ function generateTitleLinks(customSelector = '') {
     /* [NOT DONE YET]get the title from the title element */
 
     /* [DONE]create HTML of the link */
-    const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
+    const linkHTMLData = {id: articleId, title: articleTitle};
+    const linkHTML = templates.articleLink(linkHTMLData);
     console.log(linkHTML);
     /* [DONE]insert link into titleList */
     titleList.insertAdjacentHTML('beforeend', linkHTML);
@@ -121,10 +134,10 @@ function generateAuthors() {
     const author = article.getAttribute('data-author');
     console.log(author);
     /* generate HTML of the author link */
-    const linkHTML ='<a href="#author-' + author + '"><span>' + author + '</span></a>';
-    console.log(linkHTML);
+    const linkHTMLData = {id: authorId, title: authorTitle};
+    const linkHTML = templates.authorLink(linkHTMLData);
     /* add generated code to html variable */
-    html += linkHTML;
+    // html += linkHTML;
     console.log(html);
 
     /* [NEW] check if this link is NOT already in allAuthors */
@@ -210,7 +223,7 @@ function authorClickHandler(event) {
   const clickedElement = this;
   console.log('Link was clicked!');
   /* make a new constant "href" and read the attribute "href" of the clicked element */
-  const href = clickedElement.getAttribute('data-tags');
+  const href = clickedElement.getAttribute('href');
   console.log(href);
   /* make a new constant "author" and extract author from the "href" constant */
   const author = href.replace('#author-', '');
@@ -312,16 +325,17 @@ function generateTags() {
     /* START LOOP: for each tag */
     for (let tag of articleTagsArray) {
       /* generate HTML of the link */
-      const tagHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>';
-      console.log(tagHTML);
+      const linkHTMLData = {id: tagId, title: tagTitle};
+      const linkHTML = templates.tagLink(linkHTMLData);
       /* add generated code to html variable */
       titleList.innerHTML = titleList.innerHTML + tagHTML;
       /* [NEW] check if this link is NOT already in allTags */
       if (!allTags[tag]) {
         /* [NEW] add tag to allTags object */
         allTags[tag] = 1;
+      } else {
+        allTags[tag] += 1;
       }
-
       /* END LOOP: for each tag */
     }
     /* insert HTML of all the links into the tags wrapper */
@@ -333,21 +347,26 @@ function generateTags() {
 
   /* [NEW] create variable for all links HTML code */
   const tagsParam = calculateTagsParams(allTags);
-  let allTagsHTML = '';
+  const allTagsData = {tags: []};
 
   /* [NEW] START LOOP: for each tag in allTags: */
   for (let tag in allTags) {
     /* [NEW] generate code of a link and add it to allTagsHTML */
-    const tagLinkHTML = '<li class=">' + calculateTagClass(allTags[tag], tagsParam) + '</li>';
-    allTagsHTML += tagLinkHTML;
-    console.log('tagLinkHTML:', tagLinkHTML);
+    const tagLinkHTML = '<li class="' + calculateTagClass(allTags[tag], tagsParam) + '"><a href="#tag-' + tag + '">' + tag + '(' + allTags[tag] + ')</a></li>';
+    allTagsData.tags.push({
+      tag: tag,
+      count: allTags[tag],
+      className: calculateTagClass(allTags[tag], tagsParams)
+    });
 
   }
   /* [NEW] END LOOP: for each tag in allTags: */
 
   /*[NEW] add HTML from allTagsHTML to tagList */
-  tagList.innerHTML = allTagsHTML;
+  tagList.innerHTML = templates.tagCloudLink(allTagsData);
+  console.log(allTagsData);
 }
+
 
 generateTags();
 
@@ -364,3 +383,6 @@ function addClickListenersToTags() {
   }
 }
 addClickListenersToTags();
+
+
+
